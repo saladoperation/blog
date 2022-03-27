@@ -22,11 +22,6 @@ data SessionsController
     deriving (Eq, Show, Data)
 
 data UsersController
-    = UsersAction
-    | NewUserAction
-    | ShowUserAction { userId :: !(Id User) }
+    = NewUserAction
     | CreateUserAction
-    | EditUserAction { userId :: !(Id User) }
-    | UpdateUserAction { userId :: !(Id User) }
-    | DeleteUserAction { userId :: !(Id User) }
     deriving (Eq, Show, Data)
