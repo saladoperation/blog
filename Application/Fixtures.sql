@@ -14,6 +14,13 @@ SET row_security = off;
 
 SET SESSION AUTHORIZATION DEFAULT;
 
+ALTER TABLE public.entries DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.entries ENABLE TRIGGER ALL;
+
+
 ALTER TABLE public.users DISABLE TRIGGER ALL;
 
 

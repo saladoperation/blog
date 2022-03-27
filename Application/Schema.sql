@@ -6,3 +6,7 @@ CREATE TABLE users (
     locked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     failed_login_attempts INT DEFAULT 0 NOT NULL
 );
+CREATE TABLE entries (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    text TEXT NOT NULL UNIQUE
+);
