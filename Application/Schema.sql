@@ -8,5 +8,8 @@ CREATE TABLE users (
 );
 CREATE TABLE entries (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    text TEXT NOT NULL UNIQUE
+    text TEXT NOT NULL UNIQUE,
+    user_id UUID NOT NULL
 );
+CREATE INDEX entries_user_id_index ON entries (user_id);
+ALTER TABLE entries ADD CONSTRAINT entries_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
