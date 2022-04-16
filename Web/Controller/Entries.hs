@@ -14,7 +14,7 @@ instance Controller EntriesController where
 
     action NewEntryAction = do
         ensureIsUser
-        let entry = newRecord
+        let entry = newRecord |> set #userId currentUserId
         render NewView { .. }
 
     action ShowEntryAction { entryId } = do
