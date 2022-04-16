@@ -17,7 +17,7 @@ instance View NewView where
 renderForm :: User -> Html
 renderForm user = formFor user [hsx|
     {(emailField #email)}
-    {(passwordField #password)}
+    {(passwordField #passwordHash)}
     {submitButton}
 
 |]
