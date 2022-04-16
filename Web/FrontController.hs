@@ -7,6 +7,7 @@ import IHP.LoginSupport.Middleware
 import Web.Controller.Sessions
 
 -- Controller Imports
+import Web.Controller.Entries
 import Web.Controller.Users
 import Web.Controller.Static
 
@@ -15,6 +16,7 @@ instance FrontController WebApplication where
         [ startPage WelcomeAction
         , parseRoute @SessionsController
         -- Generator Marker
+        , parseRoute @EntriesController
         , parseRoute @UsersController
         ]
 

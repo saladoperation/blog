@@ -25,3 +25,13 @@ data UsersController
     = NewUserAction
     | CreateUserAction
     deriving (Eq, Show, Data)
+
+data EntriesController
+    = EntriesAction
+    | NewEntryAction
+    | ShowEntryAction { entryId :: !(Id Entry) }
+    | CreateEntryAction
+    | EditEntryAction { entryId :: !(Id Entry) }
+    | UpdateEntryAction { entryId :: !(Id Entry) }
+    | DeleteEntryAction { entryId :: !(Id Entry) }
+    deriving (Eq, Show, Data)
