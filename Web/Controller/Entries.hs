@@ -13,6 +13,7 @@ instance Controller EntriesController where
         render IndexView { .. }
 
     action NewEntryAction = do
+        ensureIsUser
         let entry = newRecord
         render NewView { .. }
 
