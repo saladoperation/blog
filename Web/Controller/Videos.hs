@@ -79,9 +79,6 @@ buildEntry entry = entry
 createVideo entry video = do
     video 
         |> set #entryId (get #id entry)
-        |> ifValid \case
-            Left video -> render NewView { .. }
-            Right video -> do 
-                video |> createRecord 
-                setSuccessMessage "Video created"
-                redirectTo VideosAction
+        |> createRecord 
+    setSuccessMessage "Video created"
+    redirectTo VideosAction
