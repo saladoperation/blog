@@ -7,6 +7,7 @@ import Web.View.Videos.Edit
 import Web.View.Videos.Show
 import qualified Network.URI as URI
 import qualified Data.Text as T
+import qualified Data.Text.Read as Read
 
 instance Controller VideosController where
     action VideosAction = do
@@ -45,24 +46,28 @@ instance Controller VideosController where
             Nothing -> render NewView { .. } 
             Just uri -> do
                 let videoId = T.tail $ T.pack $ URI.uriPath uri
-                video
-                    |> buildVideo
-                    |> set #userId currentUserId
-                    |> set #entryId (get #id $ newRecord @Entry)
-                    |> set #videoId videoId
-                    |> ifValid \case
-                        Left video -> render NewView { .. } 
-                        Right video -> do
-                            maybeEntry <- query @Entry |> findMaybeBy #text text
-                            case maybeEntry of
-                                Nothing -> do
-                                    let entry = newRecord @Entry
-                                    entry
-                                        |> buildEntry
-                                        |> ifValid \case
-                                            Left entry -> render NewView { .. } 
-                                            Right entry -> createVideo entry video
-                                Just entry -> createVideo entry video
+                case Read.decimal $ T.drop 3 $ T.pack $ URI.uriQuery uri of
+                    Left _ -> render NewView { .. } 
+                    Right (start, _) -> do
+                        video
+                            |> buildVideo
+                            |> set #userId currentUserId
+                            |> set #entryId (get #id $ newRecord @Entry)
+                            |> set #videoId videoId
+                            |> set #start start
+                            |> ifValid \case
+                                Left video -> render NewView { .. } 
+                                Right video -> do
+                                    maybeEntry <- query @Entry |> findMaybeBy #text text
+                                    case maybeEntry of
+                                        Nothing -> do
+                                            let entry = newRecord @Entry
+                                            entry
+                                                |> buildEntry
+                                                |> ifValid \case
+                                                    Left entry -> render NewView { .. } 
+                                                    Right entry -> createVideo entry video
+                                        Just entry -> createVideo entry video
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
