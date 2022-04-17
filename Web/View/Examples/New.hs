@@ -17,7 +17,6 @@ instance View NewView where
 
 renderForm :: Example -> Html
 renderForm example = formFor example [hsx|
-    {(textField #userId)}
     {(textField #entryId)}
     {(textField #startTime)}
     {submitButton}

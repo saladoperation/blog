@@ -35,9 +35,11 @@ instance Controller ExamplesController where
                     redirectTo EditExampleAction { .. }
 
     action CreateExampleAction = do
+        ensureIsUser
         let example = newRecord @Example
         example
             |> buildExample
+            |> set #userId currentUserId
             |> ifValid \case
                 Left example -> render NewView { .. } 
                 Right example -> do
