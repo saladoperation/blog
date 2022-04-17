@@ -5,8 +5,8 @@ import Web.View.Videos.Index
 import Web.View.Videos.New
 import Web.View.Videos.Edit
 import Web.View.Videos.Show
-import Network.URI (parseURI, uriPath)
-import Data.Text as T
+import qualified Network.URI as URI
+import qualified Data.Text as T
 
 instance Controller VideosController where
     action VideosAction = do
@@ -41,10 +41,10 @@ instance Controller VideosController where
         let text = param @Text "text"
         let url = param @Text "url"
         let video = newRecord @Video
-        case parseURI $ T.unpack url of
+        case URI.parseURI $ T.unpack url of
             Nothing -> render NewView { .. } 
             Just uri -> do
-                let videoId = T.tail $ T.pack $ uriPath uri
+                let videoId = T.tail $ T.pack $ URI.uriPath uri
                 video
                     |> buildVideo
                     |> set #userId currentUserId
