@@ -46,10 +46,8 @@ instance Controller VideosController where
                     |> buildEntry
                     |> ifValid \case
                         Left entry -> redirectToPath "/"
-                        Right entry -> do
-                            entry <- entry |> createRecord
-                            createVideo entry
-            Just entry -> createVideo entry
+                        Right entry -> createVideo entry True
+            Just entry -> createVideo entry False
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
@@ -63,7 +61,7 @@ buildVideo video = video
 buildEntry entry = entry
     |> fill @'["text"]
 
-createVideo entry = do
+createVideo entry new = do
     ensureIsUser
     let url = param @Text "url"
     case parseURI $ T.unpack url of
@@ -78,7 +76,12 @@ createVideo entry = do
                 |> set #videoId videoId
                 |> ifValid \case
                     Left video -> render NewView { .. } 
-                    Right video -> do
-                        video <- video |> createRecord
+                    Right video -> do 
+                        entry <- if new
+                            then entry |> createRecord
+                            else pure entry
+                        video <- video 
+                            |> set #entryId (get #id entry)
+                            |> createRecord 
                         setSuccessMessage "Video created"
                         redirectTo VideosAction
