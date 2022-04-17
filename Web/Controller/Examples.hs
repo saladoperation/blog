@@ -38,7 +38,16 @@ instance Controller ExamplesController where
         let text = param @Text "text"
         maybeEntry <- query @Entry |> findMaybeBy #text text
         case maybeEntry of
-            Nothing -> redirectToPath "/"
+            Nothing -> do
+                let entry = newRecord @Entry
+                entry
+                    |> buildEntry
+                    |> ifValid \case
+                        Left entry -> redirectToPath "/"
+                        Right entry -> do
+                            entry <- entry |> createRecord
+                            setSuccessMessage "Entry created"
+                            redirectTo EntriesAction
             Just entry -> do
                 ensureIsUser
                 let example = newRecord @Example
@@ -61,3 +70,6 @@ instance Controller ExamplesController where
 
 buildExample example = example
     |> fill @["entryId","startTime"]
+
+buildEntry entry = entry
+    |> fill @'["text"]
