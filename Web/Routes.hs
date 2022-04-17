@@ -14,5 +14,5 @@ instance AutoRoute UsersController
 instance AutoRoute EntriesController
 
 
-instance AutoRoute ExamplesController
+instance AutoRoute VideosController
 
