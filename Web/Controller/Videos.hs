@@ -36,6 +36,7 @@ instance Controller VideosController where
 
     action CreateVideoAction = do
         let text = param @Text "text"
+        let url = param @Text "url"
         maybeEntry <- query @Entry |> findMaybeBy #text text
         case maybeEntry of
             Nothing -> do

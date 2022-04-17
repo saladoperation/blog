@@ -20,7 +20,9 @@ renderForm video = formFor video [hsx|
     <div class="form-group">
         <input name="text" type="text" class="form-control" placeholder="Text"/>
     </div>
-    {(textField #start)}
+    <div class="form-group">
+        <input name="url" type="url" class="form-control" placeholder="https://youtu.be/dQw4w9WgXcQ?t=43"/>
+    </div>
     {submitButton}
 
 |]
