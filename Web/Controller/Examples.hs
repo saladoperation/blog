@@ -35,11 +35,14 @@ instance Controller ExamplesController where
                     redirectTo EditExampleAction { .. }
 
     action CreateExampleAction = do
+        let text = param @Text "text"
+        entry <- query @Entry |> findBy #text text
         ensureIsUser
         let example = newRecord @Example
         example
             |> buildExample
             |> set #userId currentUserId
+            |> set #entryId (get #id entry)
             |> ifValid \case
                 Left example -> render NewView { .. } 
                 Right example -> do
@@ -54,4 +57,4 @@ instance Controller ExamplesController where
         redirectTo ExamplesAction
 
 buildExample example = example
-    |> fill @["userId","entryId","startTime"]
+    |> fill @["entryId","startTime"]

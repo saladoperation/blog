@@ -17,7 +17,10 @@ instance View NewView where
 
 renderForm :: Example -> Html
 renderForm example = formFor example [hsx|
-    {(textField #entryId)}
+    <div class="form-group">
+        <input name="text" type="text" class="form-control" placeholder="Text"/>
+    </div>
+    <!-- {(textField #entryId)} -->
     {(textField #startTime)}
     {submitButton}
 
