@@ -46,21 +46,8 @@ instance Controller ExamplesController where
                         Left entry -> redirectToPath "/"
                         Right entry -> do
                             entry <- entry |> createRecord
-                            setSuccessMessage "Entry created"
-                            redirectTo EntriesAction
-            Just entry -> do
-                ensureIsUser
-                let example = newRecord @Example
-                example
-                    |> buildExample
-                    |> set #userId currentUserId
-                    |> set #entryId (get #id entry)
-                    |> ifValid \case
-                        Left example -> render NewView { .. } 
-                        Right example -> do
-                            example <- example |> createRecord
-                            setSuccessMessage "Example created"
-                            redirectTo ExamplesAction
+                            createExample entry
+            Just entry -> createExample entry
 
     action DeleteExampleAction { exampleId } = do
         example <- fetch exampleId
@@ -73,3 +60,17 @@ buildExample example = example
 
 buildEntry entry = entry
     |> fill @'["text"]
+
+createExample entry = do
+    ensureIsUser
+    let example = newRecord @Example
+    example
+        |> buildExample
+        |> set #userId currentUserId
+        |> set #entryId (get #id entry)
+        |> ifValid \case
+            Left example -> render NewView { .. } 
+            Right example -> do
+                example <- example |> createRecord
+                setSuccessMessage "Example created"
+                redirectTo ExamplesAction
