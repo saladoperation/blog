@@ -36,19 +36,22 @@ instance Controller ExamplesController where
 
     action CreateExampleAction = do
         let text = param @Text "text"
-        entry <- query @Entry |> findBy #text text
-        ensureIsUser
-        let example = newRecord @Example
-        example
-            |> buildExample
-            |> set #userId currentUserId
-            |> set #entryId (get #id entry)
-            |> ifValid \case
-                Left example -> render NewView { .. } 
-                Right example -> do
-                    example <- example |> createRecord
-                    setSuccessMessage "Example created"
-                    redirectTo ExamplesAction
+        maybeEntry <- query @Entry |> findMaybeBy #text text
+        case maybeEntry of
+            Nothing -> redirectToPath "/"
+            Just entry -> do
+                ensureIsUser
+                let example = newRecord @Example
+                example
+                    |> buildExample
+                    |> set #userId currentUserId
+                    |> set #entryId (get #id entry)
+                    |> ifValid \case
+                        Left example -> render NewView { .. } 
+                        Right example -> do
+                            example <- example |> createRecord
+                            setSuccessMessage "Example created"
+                            redirectTo ExamplesAction
 
     action DeleteExampleAction { exampleId } = do
         example <- fetch exampleId
