@@ -13,8 +13,7 @@ instance Controller EntriesController where
         render IndexView { .. }
 
     action NewEntryAction = do
-        ensureIsUser
-        let entry = newRecord |> set #userId currentUserId
+        let entry = newRecord
         render NewView { .. }
 
     action ShowEntryAction { entryId } = do
@@ -54,4 +53,4 @@ instance Controller EntriesController where
         redirectTo EntriesAction
 
 buildEntry entry = entry
-    |> fill @["text","userId"]
+    |> fill @'["text"]
