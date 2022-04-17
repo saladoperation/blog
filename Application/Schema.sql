@@ -15,7 +15,7 @@ CREATE TABLE videos (
     user_id UUID NOT NULL,
     entry_id UUID NOT NULL,
     "start" INT NOT NULL,
-    video_id TEXT NOT NULL
+    video_id CHARACTER(11) NOT NULL
 );
 CREATE INDEX videos_user_id_index ON videos (user_id);
 CREATE INDEX videos_entry_id_index ON videos (entry_id);
