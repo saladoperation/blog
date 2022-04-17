@@ -19,7 +19,7 @@ renderForm :: Example -> Html
 renderForm example = formFor example [hsx|
     {(textField #userId)}
     {(textField #entryId)}
-    {(textField #startTime)}
+    {(textField #start)}
     {submitButton}
 
 |]

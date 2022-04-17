@@ -56,7 +56,7 @@ instance Controller ExamplesController where
         redirectTo ExamplesAction
 
 buildExample example = example
-    |> fill @["entryId","startTime"]
+    |> fill @["entryId","start"]
 
 buildEntry entry = entry
     |> fill @'["text"]

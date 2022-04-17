@@ -14,7 +14,7 @@ CREATE TABLE examples (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     user_id UUID NOT NULL,
     entry_id UUID NOT NULL,
-    start_time INT NOT NULL
+    "start" INT NOT NULL
 );
 CREATE INDEX examples_user_id_index ON examples (user_id);
 CREATE INDEX examples_entry_id_index ON examples (entry_id);
