@@ -5,6 +5,8 @@ import Web.View.Videos.Index
 import Web.View.Videos.New
 import Web.View.Videos.Edit
 import Web.View.Videos.Show
+import Network.URI (parseURI, uriPath)
+import Data.Text as T
 
 instance Controller VideosController where
     action VideosAction = do
@@ -47,8 +49,8 @@ instance Controller VideosController where
                         Left entry -> redirectToPath "/"
                         Right entry -> do
                             entry <- entry |> createRecord
-                            createVideo entry
-            Just entry -> createVideo entry
+                            createVideo entry url
+            Just entry -> createVideo entry url
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
@@ -62,16 +64,21 @@ buildVideo video = video
 buildEntry entry = entry
     |> fill @'["text"]
 
-createVideo entry = do
+createVideo entry url = do
     ensureIsUser
-    let video = newRecord @Video
-    video
-        |> buildVideo
-        |> set #userId currentUserId
-        |> set #entryId (get #id entry)
-        |> ifValid \case
-            Left video -> render NewView { .. } 
-            Right video -> do
-                video <- video |> createRecord
-                setSuccessMessage "Video created"
-                redirectTo VideosAction
+    case parseURI $ T.unpack url of
+        Nothing -> redirectToPath "/"
+        Just uri -> do
+            let videoId = T.pack $ uriPath uri
+            let video = newRecord @Video
+            video
+                |> buildVideo
+                |> set #userId currentUserId
+                |> set #entryId (get #id entry)
+                |> set #videoId videoId
+                |> ifValid \case
+                    Left video -> render NewView { .. } 
+                    Right video -> do
+                        video <- video |> createRecord
+                        setSuccessMessage "Video created"
+                        redirectTo VideosAction
