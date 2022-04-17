@@ -6,7 +6,7 @@ data ShowView = ShowView { entry :: Include "videos" Entry }
 instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
-        <h1>Show Entry</h1>
+        <h1>{get #text entry}</h1>
         <p>{entry}</p>
 
     |]
