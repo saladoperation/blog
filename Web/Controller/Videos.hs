@@ -44,7 +44,7 @@ instance Controller VideosController where
         case parseURI $ T.unpack url of
             Nothing -> render NewView { .. } 
             Just uri -> do
-                let videoId = T.pack $ uriPath uri
+                let videoId = T.tail $ T.pack $ uriPath uri
                 video
                     |> buildVideo
                     |> set #userId currentUserId
