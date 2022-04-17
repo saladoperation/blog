@@ -1,7 +1,7 @@
 module Web.View.Entries.Show where
 import Web.View.Prelude
 
-data ShowView = ShowView { entry :: Entry }
+data ShowView = ShowView { entry :: Include "videos" Entry }
 
 instance View ShowView where
     html ShowView { .. } = [hsx|

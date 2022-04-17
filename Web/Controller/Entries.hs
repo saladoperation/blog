@@ -17,7 +17,7 @@ instance Controller EntriesController where
         render NewView { .. }
 
     action ShowEntryAction { entryId } = do
-        entry <- fetch entryId
+        entry <- fetch entryId >>= fetchRelated #videos
         render ShowView { .. }
 
     action EditEntryAction { entryId } = do
