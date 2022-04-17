@@ -38,7 +38,6 @@ instance Controller VideosController where
 
     action CreateVideoAction = do
         let text = param @Text "text"
-        let url = param @Text "url"
         maybeEntry <- query @Entry |> findMaybeBy #text text
         case maybeEntry of
             Nothing -> do
@@ -49,8 +48,8 @@ instance Controller VideosController where
                         Left entry -> redirectToPath "/"
                         Right entry -> do
                             entry <- entry |> createRecord
-                            createVideo entry url
-            Just entry -> createVideo entry url
+                            createVideo entry
+            Just entry -> createVideo entry
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
@@ -64,8 +63,9 @@ buildVideo video = video
 buildEntry entry = entry
     |> fill @'["text"]
 
-createVideo entry url = do
+createVideo entry = do
     ensureIsUser
+    let url = param @Text "url"
     case parseURI $ T.unpack url of
         Nothing -> redirectToPath "/"
         Just uri -> do
