@@ -37,17 +37,32 @@ instance Controller VideosController where
                     redirectTo EditVideoAction { .. }
 
     action CreateVideoAction = do
+        ensureIsUser
         let text = param @Text "text"
-        maybeEntry <- query @Entry |> findMaybeBy #text text
-        case maybeEntry of
-            Nothing -> do
-                let entry = newRecord @Entry
-                entry
-                    |> buildEntry
+        let url = param @Text "url"
+        let video = newRecord @Video
+        case parseURI $ T.unpack url of
+            Nothing -> render NewView { .. } 
+            Just uri -> do
+                let videoId = T.pack $ uriPath uri
+                video
+                    |> buildVideo
+                    |> set #userId currentUserId
+                    |> set #entryId (get #id $ newRecord @Entry)
+                    |> set #videoId videoId
                     |> ifValid \case
-                        Left entry -> redirectToPath "/"
-                        Right entry -> createVideo entry True
-            Just entry -> createVideo entry False
+                        Left video -> render NewView { .. } 
+                        Right video -> do
+                            maybeEntry <- query @Entry |> findMaybeBy #text text
+                            case maybeEntry of
+                                Nothing -> do
+                                    let entry = newRecord @Entry
+                                    entry
+                                        |> buildEntry
+                                        |> ifValid \case
+                                            Left entry -> render NewView { .. } 
+                                            Right entry -> createVideo entry video
+                                Just entry -> createVideo entry video
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
@@ -61,27 +76,12 @@ buildVideo video = video
 buildEntry entry = entry
     |> fill @'["text"]
 
-createVideo entry new = do
-    ensureIsUser
-    let url = param @Text "url"
-    case parseURI $ T.unpack url of
-        Nothing -> redirectToPath "/"
-        Just uri -> do
-            let videoId = T.pack $ uriPath uri
-            let video = newRecord @Video
-            video
-                |> buildVideo
-                |> set #userId currentUserId
-                |> set #entryId (get #id entry)
-                |> set #videoId videoId
-                |> ifValid \case
-                    Left video -> render NewView { .. } 
-                    Right video -> do 
-                        entry <- if new
-                            then entry |> createRecord
-                            else pure entry
-                        video <- video 
-                            |> set #entryId (get #id entry)
-                            |> createRecord 
-                        setSuccessMessage "Video created"
-                        redirectTo VideosAction
+createVideo entry video = do
+    video 
+        |> set #entryId (get #id entry)
+        |> ifValid \case
+            Left video -> render NewView { .. }
+            Right video -> do 
+                video |> createRecord 
+                setSuccessMessage "Video created"
+                redirectTo VideosAction
