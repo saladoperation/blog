@@ -36,12 +36,12 @@ data EntriesController
     | DeleteEntryAction { entryId :: !(Id Entry) }
     deriving (Eq, Show, Data)
 
-data ExamplesController
-    = ExamplesAction
-    | NewExampleAction
-    | ShowExampleAction { exampleId :: !(Id Example) }
-    | CreateExampleAction
-    | EditExampleAction { exampleId :: !(Id Example) }
-    | UpdateExampleAction { exampleId :: !(Id Example) }
-    | DeleteExampleAction { exampleId :: !(Id Example) }
+data VideosController
+    = VideosAction
+    | NewVideoAction
+    | ShowVideoAction { videoId :: !(Id Video) }
+    | CreateVideoAction
+    | EditVideoAction { videoId :: !(Id Video) }
+    | UpdateVideoAction { videoId :: !(Id Video) }
+    | DeleteVideoAction { videoId :: !(Id Video) }
     deriving (Eq, Show, Data)

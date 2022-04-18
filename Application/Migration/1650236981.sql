@@ -1,0 +1,2 @@
+ALTER TABLE videos DROP COLUMN video_id;
+ALTER TABLE videos ADD COLUMN video_id CHARACTER(11) NOT NULL;

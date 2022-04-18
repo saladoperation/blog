@@ -7,17 +7,17 @@ import IHP.LoginSupport.Middleware
 import Web.Controller.Sessions
 
 -- Controller Imports
-import Web.Controller.Examples
+import Web.Controller.Videos
 import Web.Controller.Entries
 import Web.Controller.Users
 import Web.Controller.Static
 
 instance FrontController WebApplication where
     controllers = 
-        [ startPage WelcomeAction
+        [ startPage EntriesAction
         , parseRoute @SessionsController
         -- Generator Marker
-        , parseRoute @ExamplesController
+        , parseRoute @VideosController
         , parseRoute @EntriesController
         , parseRoute @UsersController
         ]
