@@ -7,7 +7,7 @@ instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
         <h1>{get #text entry}</h1>
-        {forEach (entry |> get #videos) renderVideo}
+        {forEach (get #videos entry) renderVideo}
         <p>{entry}</p>
 
     |]
