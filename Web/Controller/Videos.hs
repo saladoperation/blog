@@ -29,7 +29,6 @@ instance Controller VideosController where
     action UpdateVideoAction { videoId } = do
         video <- fetch videoId
         video
-            |> buildVideo
             |> ifValid \case
                 Left video -> render EditView { .. }
                 Right video -> do
@@ -56,7 +55,6 @@ instance Controller VideosController where
                     Left _ -> render NewView { .. } 
                     Right (start, _) -> do
                         video
-                            |> buildVideo
                             |> set #userId currentUserId
                             |> set #entryId (get #id $ newRecord @Entry)
                             |> set #videoId videoId
@@ -82,9 +80,6 @@ instance Controller VideosController where
         deleteRecord video
         setSuccessMessage "Video deleted"
         redirectTo VideosAction
-
-buildVideo video = video
-    |> fill @["entryId","start"]
 
 buildEntry entry = entry
     |> fill @'["text"]
