@@ -1,0 +1,4 @@
+ALTER TABLE videos DROP COLUMN video_id;
+ALTER TABLE videos ADD COLUMN video_id CHARACTER(11) NULL;
+UPDATE videos SET video_id = 'dQw4w9WgXcQ';
+ALTER TABLE videos ALTER COLUMN video_id SET NOT NULL;
