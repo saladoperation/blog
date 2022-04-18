@@ -53,27 +53,24 @@ instance Controller VideosController where
                         |> T.drop 3
                         |> Read.decimal of
                     Left _ -> render NewView { .. } 
-                    Right (start, _) -> do
-                        video
-                            |> set #userId currentUserId
-                            |> set #entryId (get #id $ newRecord @Entry)
-                            |> set #videoId videoId
-                            |> set #start start
-                            |> ifValid \case
-                                Left video -> render NewView { .. } 
-                                Right video -> do
-                                    maybeEntry <- query @Entry |> findMaybeBy #text text
-                                    case maybeEntry of
-                                        Nothing -> do
-                                            let entry = newRecord @Entry
-                                            entry
-                                                |> buildEntry
-                                                |> ifValid \case
-                                                    Left entry -> render NewView { .. } 
-                                                    Right entry -> do
-                                                        entry <- entry |> createRecord
-                                                        createVideo entry video
-                                        Just entry -> createVideo entry video
+                    Right (start, _) -> video
+                        |> set #userId currentUserId
+                        |> set #entryId (get #id $ newRecord @Entry)
+                        |> set #videoId videoId
+                        |> set #start start
+                        |> ifValid \case
+                            Left video -> render NewView { .. } 
+                            Right video -> do
+                                maybeEntry <- query @Entry |> findMaybeBy #text text
+                                case maybeEntry of
+                                    Nothing -> newRecord @Entry
+                                        |> buildEntry
+                                        |> ifValid \case
+                                            Left entry -> render NewView { .. } 
+                                            Right entry -> do
+                                                entry <- entry |> createRecord
+                                                createVideo entry video
+                                    Just entry -> createVideo entry video
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
