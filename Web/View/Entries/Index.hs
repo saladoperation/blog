@@ -30,10 +30,7 @@ instance View IndexView where
 
 renderEntry :: Entry -> Html
 renderEntry entry = [hsx|
-    <tr>
-        <td>{entry}</td>
-        <td><a href={ShowEntryAction (get #id entry)}>Show</a></td>
-        <td><a href={EditEntryAction (get #id entry)} class="text-muted">Edit</a></td>
-        <td><a href={DeleteEntryAction (get #id entry)} class="js-delete text-muted">Delete</a></td>
-    </tr>
+
+    <a href={ShowEntryAction (get #id entry)}><div>{get #text entry}</div></a>
+
 |]
