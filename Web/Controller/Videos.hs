@@ -66,7 +66,9 @@ instance Controller VideosController where
                                                 |> buildEntry
                                                 |> ifValid \case
                                                     Left entry -> render NewView { .. } 
-                                                    Right entry -> createVideo entry video
+                                                    Right entry -> do
+                                                        entry <- entry |> createRecord
+                                                        createVideo entry video
                                         Just entry -> createVideo entry video
 
     action DeleteVideoAction { videoId } = do
