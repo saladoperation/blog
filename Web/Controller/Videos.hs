@@ -38,10 +38,9 @@ instance Controller VideosController where
 
     action CreateVideoAction = do
         ensureIsUser
-        let text = param @Text "text"
-        let url = param @Text "url"
         let video = newRecord @Video
-        case T.unpack url
+        case param @Text "url"
+                |> T.unpack
                 |> URI.parseURI of
             Nothing -> render NewView { .. } 
             Just uri -> do
@@ -61,7 +60,7 @@ instance Controller VideosController where
                         |> ifValid \case
                             Left video -> render NewView { .. } 
                             Right video -> do
-                                maybeEntry <- query @Entry |> findMaybeBy #text text
+                                maybeEntry <- query @Entry |> findMaybeBy #text (param @Text "text")
                                 case maybeEntry of
                                     Nothing -> newRecord @Entry
                                         |> buildEntry
