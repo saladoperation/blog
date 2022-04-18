@@ -8,7 +8,7 @@ import Web.View.Entries.Show
 
 instance Controller EntriesController where
     action EntriesAction = do
-        (entriesQ, pagination) <- query @Entry |> paginate
+        (entriesQ, pagination) <- query @Entry |> paginateWithOptions (defaultPaginationOptions |> set #maxItems 2)
         entries <- entriesQ |> fetch
         render IndexView { .. }
 
