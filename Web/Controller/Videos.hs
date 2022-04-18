@@ -15,7 +15,8 @@ instance Controller VideosController where
         render IndexView { .. }
 
     action NewVideoAction = do
-        let video = newRecord
+        let video = newRecord @Video
+        let entry = newRecord @Entry
         render NewView { .. }
 
     action ShowVideoAction { videoId } = do
@@ -39,6 +40,7 @@ instance Controller VideosController where
     action CreateVideoAction = do
         ensureIsUser
         let video = newRecord @Video
+        let entry = newRecord @Entry
         case param @Text "url"
                 |> T.unpack
                 |> URI.parseURI of
