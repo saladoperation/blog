@@ -5,7 +5,6 @@ data NewView = NewView { video :: Video }
 
 instance View NewView where
     html NewView { .. } = [hsx|
-        {breadcrumb}
         <h1>New Video</h1>
         {renderForm video}
     |]
