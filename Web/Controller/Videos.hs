@@ -42,11 +42,17 @@ instance Controller VideosController where
         let text = param @Text "text"
         let url = param @Text "url"
         let video = newRecord @Video
-        case URI.parseURI $ T.unpack url of
+        case T.unpack url
+                |> URI.parseURI of
             Nothing -> render NewView { .. } 
             Just uri -> do
-                let videoId = T.tail $ T.pack $ URI.uriPath uri
-                case Read.decimal $ T.drop 3 $ T.pack $ URI.uriQuery uri of
+                let videoId = URI.uriPath uri
+                                |> T.pack
+                                |> T.tail
+                case URI.uriQuery uri
+                        |> T.pack
+                        |> T.drop 3
+                        |> Read.decimal of
                     Left _ -> render NewView { .. } 
                     Right (start, _) -> do
                         video
