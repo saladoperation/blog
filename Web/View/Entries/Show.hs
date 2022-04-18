@@ -19,6 +19,6 @@ instance View ShowView where
 
 renderVideo video = [hsx|
 
-    <div><iframe allowfullscreen="" frameborder="0" height="315" src={"http://www.youtube.com/embed/" <> (get #videoId video) <> "?start=" <> (show $ get #start video)} width="420"></iframe></div>
+    <div><iframe allowfullscreen="" frameborder="0" height="315" src={"https://www.youtube.com/embed/" <> (get #videoId video) <> "?start=" <> (show $ get #start video)} width="420"></iframe></div>
 
 |]
