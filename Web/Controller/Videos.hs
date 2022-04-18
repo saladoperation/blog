@@ -64,8 +64,10 @@ instance Controller VideosController where
                                 case maybeEntry of
                                     Nothing -> newRecord @Entry
                                         |> buildEntry
+                                        |> validateField #text nonEmpty
                                         |> ifValid \case
-                                            Left entry -> render NewView { .. } 
+                                            Left entry -> do 
+                                                render NewView { .. } 
                                             Right entry -> do
                                                 entry <- entry |> createRecord
                                                 createVideo entry video
