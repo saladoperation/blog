@@ -10,6 +10,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Read as Read
 
 instance Controller VideosController where
+    beforeAction = ensureIsUser
     action VideosAction = do
         videos <- query @Video |> fetch
         render IndexView { .. }
@@ -38,7 +39,6 @@ instance Controller VideosController where
                     redirectTo EditVideoAction { .. }
 
     action CreateVideoAction = do
-        ensureIsUser
         let video = newRecord @Video
         let entry = newRecord @Entry
         case param @Text "url"
