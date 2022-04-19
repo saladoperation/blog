@@ -20,7 +20,7 @@ instance View NewView where
 renderForm :: Video -> Entry -> Html
 renderForm video entry = [hsx|
     <div class="form-group">
-        <input name="text" type="text" class={classes ["form-control", ("is-invalid", isInvalidText)]} placeholder="Text"/>
+        <input name="text" type="text" class={classes ["form-control", ("is-invalid", isInvalidText)]} placeholder="Text" autofocus/>
         {textFeedback}
     </div>
     <div class="form-group">
