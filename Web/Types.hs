@@ -48,3 +48,4 @@ data VideosController
 
 data SearchesController
     = ShowSearchAction { keyword :: Text }
+    deriving (Eq, Show, Data)
