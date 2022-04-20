@@ -45,3 +45,7 @@ data VideosController
     | UpdateVideoAction { videoId :: !(Id Video) }
     | DeleteVideoAction { videoId :: !(Id Video) }
     deriving (Eq, Show, Data)
+
+data SearchesController
+    = ShowSearchAction { keyword :: Text }
+    deriving (Eq, Show, Data)
