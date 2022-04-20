@@ -3,6 +3,8 @@ import IHP.RouterPrelude
 import Generated.Types
 import Web.Types
 
+instance AutoRoute SearchesController
+
 -- Generator Marker
 instance AutoRoute StaticController
 

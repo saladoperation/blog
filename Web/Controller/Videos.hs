@@ -10,12 +10,14 @@ import qualified Data.Text as T
 import qualified Data.Text.Read as Read
 
 instance Controller VideosController where
+    beforeAction = ensureIsUser
     action VideosAction = do
         videos <- query @Video |> fetch
         render IndexView { .. }
 
     action NewVideoAction = do
-        let video = newRecord
+        let video = newRecord @Video
+        let entry = newRecord @Entry
         render NewView { .. }
 
     action ShowVideoAction { videoId } = do
@@ -29,7 +31,6 @@ instance Controller VideosController where
     action UpdateVideoAction { videoId } = do
         video <- fetch videoId
         video
-            |> buildVideo
             |> ifValid \case
                 Left video -> render EditView { .. }
                 Right video -> do
@@ -38,47 +39,46 @@ instance Controller VideosController where
                     redirectTo EditVideoAction { .. }
 
     action CreateVideoAction = do
-        ensureIsUser
-        let text = param @Text "text"
-        let url = param @Text "url"
         let video = newRecord @Video
-        case URI.parseURI $ T.unpack url of
+        let entry = newRecord @Entry
+        case param @Text "url"
+                |> T.unpack
+                |> URI.parseURI of
             Nothing -> render NewView { .. } 
             Just uri -> do
-                let videoId = T.tail $ T.pack $ URI.uriPath uri
-                case Read.decimal $ T.drop 3 $ T.pack $ URI.uriQuery uri of
+                let videoId = URI.uriPath uri
+                                |> T.pack
+                                |> T.tail
+                case URI.uriQuery uri
+                        |> T.pack
+                        |> T.drop 3
+                        |> Read.decimal of
                     Left _ -> render NewView { .. } 
-                    Right (start, _) -> do
-                        video
-                            |> buildVideo
-                            |> set #userId currentUserId
-                            |> set #entryId (get #id $ newRecord @Entry)
-                            |> set #videoId videoId
-                            |> set #start start
-                            |> ifValid \case
-                                Left video -> render NewView { .. } 
-                                Right video -> do
-                                    maybeEntry <- query @Entry |> findMaybeBy #text text
-                                    case maybeEntry of
-                                        Nothing -> do
-                                            let entry = newRecord @Entry
-                                            entry
-                                                |> buildEntry
-                                                |> ifValid \case
-                                                    Left entry -> render NewView { .. } 
-                                                    Right entry -> do
-                                                        entry <- entry |> createRecord
-                                                        createVideo entry video
-                                        Just entry -> createVideo entry video
+                    Right (start, _) -> video
+                        |> set #userId currentUserId
+                        |> set #entryId (get #id $ newRecord @Entry)
+                        |> set #videoId videoId
+                        |> set #start start
+                        |> ifValid \case
+                            Left video -> render NewView { .. } 
+                            Right video -> do
+                                maybeEntry <- query @Entry |> findMaybeBy #text (param @Text "text")
+                                case maybeEntry of
+                                    Nothing -> newRecord @Entry
+                                        |> buildEntry
+                                        |> validateField #text nonEmpty
+                                        |> ifValid \case
+                                            Left entry -> render NewView { .. } 
+                                            Right entry -> do
+                                                entry <- entry |> createRecord
+                                                createVideo entry video
+                                    Just entry -> createVideo entry video
 
     action DeleteVideoAction { videoId } = do
         video <- fetch videoId
         deleteRecord video
         setSuccessMessage "Video deleted"
         redirectTo VideosAction
-
-buildVideo video = video
-    |> fill @["entryId","start"]
 
 buildEntry entry = entry
     |> fill @'["text"]
