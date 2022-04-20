@@ -11,11 +11,13 @@ import Web.Controller.Videos
 import Web.Controller.Entries
 import Web.Controller.Users
 import Web.Controller.Static
+import Web.Controller.Searches
 
 instance FrontController WebApplication where
     controllers = 
         [ startPage EntriesAction
         , parseRoute @SessionsController
+        , parseRoute @SearchesController
         -- Generator Marker
         , parseRoute @VideosController
         , parseRoute @EntriesController
